@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const webpack = require('webpack');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
@@ -29,6 +32,38 @@ const nextConfig = {
         },
       ],
     });
+
+    config.mode = 'development';
+    config.devtool = 'source-map';
+    // config.resolve.extensions = ['.ts', '.js'];
+    config.resolve.fallback = {
+      net: false,
+      tls: false,
+      dns: false,
+      zlib: false,
+      fs: false,
+      stream: require.resolve('stream-browserify'),
+      events: require.resolve('events/'),
+      buffer: require.resolve('buffer/'),
+      url: require.resolve('url/'),
+      http: require.resolve('stream-http'),
+      https: require.resolve('https-browserify'),
+      crypto: require.resolve('crypto-browserify'),
+      querystring: require.resolve('querystring-es3'),
+      os: require.resolve('os-browserify/browser'),
+      assert: require.resolve('assert/'),
+    };
+    config.module.rules.push({
+      test: /.ts$/,
+      loader: 'ts-loader',
+    });
+
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        'process.browser': true,
+        'process.env.NODE_DEBUG': false,
+      })
+    );
 
     return config;
   },
