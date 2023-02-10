@@ -1,18 +1,32 @@
-import data from '@emoji-mart/data'
-import Picker from '@emoji-mart/react'
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
 import * as React from 'react';
+import {
+  BsClipboardData,
+  BsEmojiSmileUpsideDown,
+  BsExclamationTriangle,
+  BsUpload,
+} from 'react-icons/bs';
+import { FaGlobeAmericas } from 'react-icons/fa';
+import { HiLanguage } from 'react-icons/hi2';
 
 import { login } from '@/lib/mastrodon_lib/authenticate';
 import { events } from '@/lib/mastrodon_lib/core';
-import { EmojiType, getCustomEmojis, getEmojiCache, setEmojiCache } from '@/lib/mastrodon_lib/customEmojis';
+import {
+  EmojiType,
+  getCustomEmojis,
+  getEmojiCache,
+  setEmojiCache,
+} from '@/lib/mastrodon_lib/customEmojis';
 import { Media, toot, TootOptions } from '@/lib/mastrodon_lib/events/toot';
 
 import Button from '@/components/buttons/Button';
 import Card from '@/components/Card';
+import { ImageHolder } from '@/components/ImageHolder';
+import Input from '@/components/Input';
 
 import Layout from '../components/layout/Layout';
 import Seo from '../components/Seo';
-
 
 export interface FileWithPath extends File {
   readonly path?: string;
@@ -28,12 +42,11 @@ export default function LoginPage() {
   React.useEffect(() => {
     if (!loginSuccess) {
       login()
-      .then(() => setloginSuccess(true))
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      .catch((e) => console.log(e));
+        .then(() => setloginSuccess(true))
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        .catch((e) => console.log(e));
     }
   }, [loginSuccess]);
-  
 
   const [state, setState] = React.useState<{
     showEmojiPicker: boolean;
@@ -72,8 +85,8 @@ export default function LoginPage() {
         console.log(e);
       });
     //Clear
-    if (inputRef.current) inputRef.current.value = "";
-    if (contentWarningRef.current) contentWarningRef.current.value = "";
+    if (inputRef.current) inputRef.current.value = '';
+    if (contentWarningRef.current) contentWarningRef.current.value = '';
   }
 
   //Used for knowing where to insert emojis
@@ -85,7 +98,7 @@ export default function LoginPage() {
     shortcodes: string;
     native: string;
   }) {
-    if (typeof inputRef.current?.value == "string") {
+    if (typeof inputRef.current?.value == 'string') {
       const v = inputRef.current.value;
       inputRef.current.value =
         v.substring(0, state.selectStart) +
@@ -94,7 +107,7 @@ export default function LoginPage() {
     }
   }
 
-  events.on("ready", async () => {
+  events.on('ready', async () => {
     const emojis = await getCustomEmojis();
     setEmojiCache(emojis);
     setState({ ...state, customEmojis: emojis });
@@ -128,9 +141,9 @@ export default function LoginPage() {
       if (images.files.length < 5)
         setImages({
           ...images,
-          files: [...images.files, { file: file, alt: "" }],
+          files: [...images.files, { file: file, alt: '' }],
         });
-      else alert("No more than 4 images are allowed");
+      else alert('No more than 4 images are allowed');
     }
   }
 
@@ -141,82 +154,96 @@ export default function LoginPage() {
     }));
   }
 
-
   return (
     <Layout>
       <Seo templateTitle='Login' />
 
       <main>
-      <Card className='w-60'>
-
-          <input
+        <Card className='w-80 px-2 py-6'>
+          <Input
             // labelPlaceholder="Content Warning"
             // status="error"
             // css={{ marginBottom: "10px", marginTop: "10px" }}
-
+            placeholder='Content Warning'
+            className='mb-2 w-11/12 px-2 py-3'
             ref={contentWarningRef}
           />
-
-          <textarea
-            // width="100%"
-            ref={inputRef}
-            onSelect={saveSelectedArea}
-            aria-label="Text Box"
-          ></textarea>
+          <div className='flex h-36 w-11/12 flex-col rounded-xl border-none border-slate-400 outline-none dark:bg-gray-700 dark:text-white'>
+            <textarea
+              ref={inputRef}
+              onSelect={saveSelectedArea}
+              placeholder='Whats on your mind?'
+              className='h-full w-full resize-none rounded-t-xl border-none bg-transparent px-3 py-2 outline-none dark:text-white'
+            ></textarea>
+            <div className='flex h-8 w-full items-center rounded-b-xl bg-slate-100 dark:bg-slate-600'>
+              <button onClick={toggleEmojiPicker} className='py-3 pr-2 pl-3'>
+                <BsEmojiSmileUpsideDown></BsEmojiSmileUpsideDown>
+              </button>
+              {/* <button className='py-3 px-2'>
+                <BsUpload></BsUpload>
+              </button> */}
+              <label htmlFor='file-upload' className='cursor-pointer py-3 px-2'>
+                <BsUpload></BsUpload>
+              </label>
+              <button className='py-3 pr-2 pl-3'>
+                <BsExclamationTriangle></BsExclamationTriangle>
+              </button>
+              <button className='py-3 pr-2 pl-3'>
+                <BsClipboardData></BsClipboardData>
+              </button>
+              <button className='py-3 pr-2 pl-3'>
+                <FaGlobeAmericas></FaGlobeAmericas>
+              </button>
+              <button className='py-3 pr-2 pl-3'>
+                <HiLanguage></HiLanguage>
+              </button>
+            </div>
+          </div>
 
           {state.showEmojiPicker ? (
             <Picker
               data={data}
               onEmojiSelect={addEmojiToTextbox}
               custom={[
-                { id: "custom", name: "Custom", emojis: getEmojiCache() },
+                { id: 'custom', name: 'Custom', emojis: getEmojiCache() },
               ]}
             />
           ) : null}
 
-          <label htmlFor="file-upload">
-            Upload
-          </label>
           <input
-            id="file-upload"
-            type="file"
+            id='file-upload'
+            type='file'
             onChange={fileUpload}
-            value=""
-            style={{ display: "none" }}
+            value=''
+            style={{ display: 'none' }}
           />
-          <Button
-          
-          onClick={toggleEmojiPicker}
-          >
-            😀
-          </Button>
-          {/* <Grid.Container>
+          {/* <Button onClick={toggleEmojiPicker}>😀</Button> */}
+          <div>
             {images.files.map(function (file, i) {
               return (
-                <Grid xs={6} key={i}>
-                  <ImageHolder
-                    file={file}
-                    id={i}
-                    //@ts-ignore
-                    onDelete={deleteImage}
-                    //@ts-ignore
-                    setFile={(file: MastoFile) => {
-                      setImages((prevState) => {
-                        const newImages = [...prevState.files];
-                        newImages[i] = file;
-                        return { files: newImages };
-                      });
-                    }}
-                  ></ImageHolder>
-                </Grid>
+                <ImageHolder
+                  file={file}
+                  id={i}
+                  key={i}
+                  // onDelete={deleteImage}
+                  // setFile={(file: MastoFile) => {
+                  //   setImages((prevState) => {
+                  //     const newImages = [...prevState.files];
+                  //     newImages[i] = file;
+                  //     return { files: newImages };
+                  //   });
+                  // }}
+                ></ImageHolder>
               );
             })}
-          </Grid.Container> */}
+          </div>
 
-          <Button onClick={post}>
-            Post
-          </Button>
-      </Card>
+          <div className='flex w-11/12 justify-end pt-2'>
+            <Button onClick={post} className='relative right-0'>
+              Post
+            </Button>
+          </div>
+        </Card>
       </main>
     </Layout>
   );

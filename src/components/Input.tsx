@@ -14,8 +14,7 @@ export default function Input({ inputRef, ...rest }: NextInputProps) {
     <input
       ref={inputRef}
       {...rest}
-      className={`rounded-xl border-slate-400 px-3 py-5 ${className}`}
+      className={`rounded-xl border-slate-400 px-3 py-5 dark:bg-gray-700 dark:text-white ${className}`}
     ></input>
   );
 }
-
