@@ -197,6 +197,9 @@ export default function LoginPage() {
               <button className='py-3 pr-2 pl-3'>
                 <HiLanguage></HiLanguage>
               </button>
+              <div className='flex h-full flex-1 items-center justify-end'>
+                <p className='p-3'>{inputRef.current?.value.length}</p>
+              </div>
             </div>
           </div>
 
