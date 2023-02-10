@@ -4,7 +4,6 @@ import { finishLogin, generateAuthURL } from '@/lib/mastrodon_lib/authenticate';
 import { setURL } from '@/lib/mastrodon_lib/core';
 
 import Button from '../components/buttons/Button';
-import Card from '../components/Card';
 import Input from '../components/Input';
 import Layout from '../components/layout/Layout';
 import UnderlineLink from '../components/links/UnderlineLink';
@@ -40,10 +39,15 @@ export default function LoginPage() {
       finishLogin(state.token);
       // }
     } else {
-      generateAuthURL(async (url: string | null) => {
-        if (url) setState({ ...state, generatedURL: url });
-      }, state.name);
+      try {
+        generateAuthURL(async (url: string | null) => {
+          if (url) setState({ ...state, generatedURL: url });
+        }, state.name);
+      } catch (e: any) {
+        console.log(e);
+      }
     }
+
     if (inputRef.current) inputRef.current.value = '';
   };
 
@@ -52,11 +56,13 @@ export default function LoginPage() {
       <Seo templateTitle='Login' />
 
       <main className='grid min-h-screen bg-slate-200 shadow dark:bg-slate-900'>
-        <Card
+        <div
           // variant="bordered"
-          className='h-2/4 w-1/3 p-4'
+          className='flex h-2/4 w-1/3 flex-col items-center justify-center place-self-center p-4'
           // css={{ mw: "400px", padding: "34px", paddingBottom: "0px" }}
         >
+          <h1 className='mb-20 text-6xl text-black dark:text-white'>Tusklet</h1>
+
           {/* <Card.Body> */}
           {state.generatedURL ? (
             <div>
@@ -64,23 +70,31 @@ export default function LoginPage() {
                 href={state.generatedURL}
                 target='_blank'
                 color='secondary'
-                className='text-black dark:text-white'
+                className='mb-10 text-black dark:text-white'
               >
                 Please authenticate this client here and copy the code
               </UnderlineLink>
             </div>
           ) : null}
-          <Input
-            placeholder={
-              state.generatedURL ? 'Enter The Code' : 'Enter a domain'
-            }
-            onChange={input}
-            ref={inputRef}
-            className='m-8 min-h-0 min-w-0'
-            // labelPlaceholder="Secondary"
-            // css={{ width: "100%", marginTop: "12px" }}
-            color='secondary'
-          />
+
+          <div className='flex w-full rounded-xl p-1 focus:outline-none dark:bg-gray-700'>
+            <Input
+              placeholder={
+                state.generatedURL ? 'Enter The Code' : 'Enter a domain'
+              }
+              onChange={input}
+              inputRef={inputRef}
+              className='text-l w-full flex-1 bg-transparent dark:text-white'
+              // labelPlaceholder="Secondary"
+              // css={{ width: "100%", marginTop: "12px" }}
+              color='secondary'
+            />
+
+            <Button onClick={auth} className='m-4 min-h-0 min-w-0'>
+              Next
+            </Button>
+          </div>
+
           {/* </Card.Body> */}
           {/* <Card.Divider /> */}
 
@@ -91,11 +105,9 @@ export default function LoginPage() {
               justifyContent: "center",
             }}
           > */}
-          <Button onClick={auth} className='m-4 min-h-0 min-w-0'>
-            Next
-          </Button>
+
           {/* </Card.Footer> */}
-        </Card>
+        </div>
       </main>
     </Layout>
   );
