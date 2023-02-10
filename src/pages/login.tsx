@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { finishLogin, generateAuthURL } from '@/lib/mastrodon_lib/authenticate';
-import { setURL } from '@/lib/mastrodon_lib/core';
+import { isURLMastodon, setURL } from '@/lib/mastrodon_lib/core';
 
 import Button from '../components/buttons/Button';
 import Input from '../components/Input';
@@ -38,9 +38,15 @@ export default function LoginPage() {
       finishLogin(state.token);
       location.href = '/post';
     } else {
-      generateAuthURL(async (url: string | null) => {
-        if (url) setState({ ...state, generatedURL: url });
-      }, state.name);
+      (async () => {
+        if (await isURLMastodon(state.name)) {
+          generateAuthURL(async (url: string | null) => {
+            if (url) setState({ ...state, generatedURL: url });
+          }, state.name);
+        }else{
+          alert("Error, that is not a mastodon URL")
+        }
+      })();
     }
 
     if (inputRef.current) inputRef.current.value = '';

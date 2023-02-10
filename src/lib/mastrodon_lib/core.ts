@@ -1,8 +1,10 @@
 // import localStorageDriver from "unstorage/drivers/localstorage";
+import axios from 'axios';
 import EventEmitter from 'events';
 import generator, { MegalodonInterface } from 'megalodon';
 // import { LocalStorageDriver } from "../localStore_lib/drivers/LocalStorage";
 import * as Storage from 'ts-storage';
+
 export const events = new EventEmitter();
 
 let url: string;
@@ -73,4 +75,13 @@ export async function loadSaveId(
   );
 
   setToken(datastore.get(`profiles.${saveId}.token`, '').value);
+}
+
+export async function isURLMastodon(url: string) {
+  try {
+    const response = await axios.get(`https://${url}/api/v1/instance`);
+    return response.data.uri === url;
+  } catch (error) {
+    return false;
+  }
 }

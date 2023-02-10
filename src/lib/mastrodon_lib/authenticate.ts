@@ -65,6 +65,9 @@ export function finishLogin(authKey: string) {
           datastore.get('currentSaveId', 0).value
         );
         datastore.set('totalProfiles', datastore.get('currentSaveId', 0).value);
+      })
+      .catch((err) => {
+        console.error('fetching token failed', err);
       });
 }
 
