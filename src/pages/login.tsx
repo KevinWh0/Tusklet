@@ -33,19 +33,14 @@ export default function LoginPage() {
 
   const auth = () => {
     if (state.generatedURL) {
-      // if (inputRef.current) {
-      // console.log(inputRef.current.value)
+      if (!state.token) return;
       setState({ ...state, token: state.token });
       finishLogin(state.token);
-      // }
+      location.href = '/post';
     } else {
-      try {
-        generateAuthURL(async (url: string | null) => {
-          if (url) setState({ ...state, generatedURL: url });
-        }, state.name);
-      } catch (e: any) {
-        console.log(e);
-      }
+      generateAuthURL(async (url: string | null) => {
+        if (url) setState({ ...state, generatedURL: url });
+      }, state.name);
     }
 
     if (inputRef.current) inputRef.current.value = '';
