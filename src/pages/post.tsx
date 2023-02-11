@@ -113,18 +113,9 @@ export default function LoginPage() {
     setState({ ...state, customEmojis: emojis });
   });
 
-  // useEffect(() => {
-  //   console.log(state.customEmojis, "Pog")
-  // }, state.customEmojis);
-
   function toggleEmojiPicker() {
     setState({ ...state, showEmojiPicker: !state.showEmojiPicker });
-    console.log(state);
   }
-
-  // const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
-  //   onDrop: ,
-  // });
 
   function fileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files) {
@@ -176,25 +167,31 @@ export default function LoginPage() {
               className='h-full w-full resize-none rounded-t-xl border-none bg-transparent px-3 py-2 outline-none dark:text-white'
             ></textarea>
             <div className='flex h-8 w-full items-center rounded-b-xl bg-slate-100 dark:bg-slate-600'>
-              <button onClick={toggleEmojiPicker} className='py-3 pr-2 pl-3'>
+              <button
+                onClick={toggleEmojiPicker}
+                className='mx-2 rounded-xl p-1 hover:bg-slate-400'
+              >
                 <BsEmojiSmileUpsideDown></BsEmojiSmileUpsideDown>
               </button>
               {/* <button className='py-3 px-2'>
                 <BsUpload></BsUpload>
               </button> */}
-              <label htmlFor='file-upload' className='cursor-pointer py-3 px-2'>
+              <label
+                htmlFor='file-upload'
+                className='mx-2 cursor-pointer rounded-xl p-1 hover:bg-slate-400'
+              >
                 <BsUpload></BsUpload>
               </label>
-              <button className='py-3 pr-2 pl-3'>
+              <button className='mx-2 rounded-xl p-1 hover:bg-slate-400'>
                 <BsExclamationTriangle></BsExclamationTriangle>
               </button>
-              <button className='py-3 pr-2 pl-3'>
+              <button className='mx-2 rounded-xl p-1 hover:bg-slate-400'>
                 <BsClipboardData></BsClipboardData>
               </button>
-              <button className='py-3 pr-2 pl-3'>
+              <button className='mx-2 rounded-xl p-1 hover:bg-slate-400'>
                 <FaGlobeAmericas></FaGlobeAmericas>
               </button>
-              <button className='py-3 pr-2 pl-3'>
+              <button className='mx-2 rounded-xl p-1 hover:bg-slate-400'>
                 <HiLanguage></HiLanguage>
               </button>
               <div className='flex h-full flex-1 items-center justify-end'>

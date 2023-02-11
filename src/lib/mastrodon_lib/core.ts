@@ -1,5 +1,5 @@
 // import localStorageDriver from "unstorage/drivers/localstorage";
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import EventEmitter from 'events';
 import generator, { MegalodonInterface } from 'megalodon';
 // import { LocalStorageDriver } from "../localStore_lib/drivers/LocalStorage";
@@ -8,11 +8,11 @@ import * as Storage from 'ts-storage';
 export const events = new EventEmitter();
 
 let url: string;
-
+let currentSaveId: string | number = 0;
 export function setURL(newUrl: string) {
   url = newUrl;
   client = generator('mastodon', `https://${url}`);
-  const currentSaveId = datastore.get('currentSaveId', 0).value;
+  currentSaveId = datastore.get('currentSaveId', 0).value;
   datastore.set(`profiles.${currentSaveId}.url`, url);
 }
 
@@ -39,7 +39,7 @@ export const datastore = Storage;
 // })();
 
 export function setClientData(newClientId: string, newClientSecret: string) {
-  const currentSaveId = datastore.get('currentSaveId', 0).value;
+  // const currentSaveId = datastore.get('currentSaveId', 0).value;
 
   clientId = newClientId;
   clientSecret = newClientSecret;
@@ -53,7 +53,7 @@ export let client: MegalodonInterface;
 
 export function setToken(token: string | null) {
   client = generator('mastodon', `https://${url}`, token);
-  const currentSaveId = datastore.get('currentSaveId', 0).value;
+  // const currentSaveId = datastore.get('currentSaveId', 0).value;
 
   if (token) datastore.set(`profiles.${currentSaveId}.token`, token);
   datastore.set(`profiles.${currentSaveId}.url`, url);
@@ -62,7 +62,7 @@ export function setToken(token: string | null) {
 }
 
 export async function loadSaveId(
-  saveId: string | null = datastore.get('currentSaveId', '0').value
+  saveId: string | null = currentSaveId.toString()
 ) {
   if (saveId) datastore.set('currentSaveId', saveId);
   else console.error(`saveId is undefined`);
@@ -75,6 +75,19 @@ export async function loadSaveId(
   );
 
   setToken(datastore.get(`profiles.${saveId}.token`, '').value);
+}
+let instanceData: AxiosResponse<any, any>;
+export async function getInstanceData(
+  url: string = datastore.get(`profiles.${currentSaveId}.url`, '').value
+) {
+  if (instanceData) return instanceData;
+  try {
+    const response = await axios.get(`https://${url}/api/v1/instance`);
+    instanceData = response;
+    return response;
+  } catch (error) {
+    return false;
+  }
 }
 
 export async function isURLMastodon(url: string) {
