@@ -9,6 +9,9 @@ import {
 } from 'react-icons/bs';
 import { FaGlobeAmericas } from 'react-icons/fa';
 import { HiLanguage } from 'react-icons/hi2';
+import { toast, ToastContainer } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 import { login } from '@/lib/mastrodon_lib/authenticate';
 import { events } from '@/lib/mastrodon_lib/core';
@@ -44,7 +47,9 @@ export default function LoginPage() {
       login()
         .then(() => setloginSuccess(true))
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        .catch((e) => console.log(e));
+        .catch((e) => {
+          console.log(e.url);
+        });
     }
   }, [loginSuccess]);
 
@@ -80,10 +85,15 @@ export default function LoginPage() {
       medias.push({ media: m.file, description: m.alt });
     }
 
-    if (status)
-      toot(status, medias, options).then((e) => {
-        console.log(e);
+    if (status) {
+      const post = toot(status, medias, options);
+
+      toast.promise(post, {
+        pending: 'Posting...',
+        success: 'Posted Toot!',
+        error: 'Count not post toot ):',
       });
+    }
     //Clear
     if (inputRef.current) inputRef.current.value = '';
     if (contentWarningRef.current) contentWarningRef.current.value = '';
@@ -102,7 +112,7 @@ export default function LoginPage() {
       const v = inputRef.current.value;
       inputRef.current.value =
         v.substring(0, state.selectStart) +
-        (emojiData.native || emojiData.shortcodes) +
+        `${emojiData.native || emojiData.shortcodes} ` +
         v.substring(state.selectStart, v.length + 1);
     }
   }
@@ -147,8 +157,20 @@ export default function LoginPage() {
 
   return (
     <Layout>
-      <Seo templateTitle='Login' />
+      <Seo templateTitle='Post' />
 
+      <ToastContainer
+        position='top-right'
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme='dark'
+      />
       <main>
         <Card className='w-80 px-2 py-6'>
           <Input
