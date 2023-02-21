@@ -21,6 +21,8 @@ export default function LoginPage() {
   });
 
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const nextButtonRef = React.useRef<HTMLButtonElement>(null);
+
 
   const input = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (state.generatedURL) {
@@ -40,9 +42,8 @@ export default function LoginPage() {
     } else {
       (async () => {
         if (await isURLMastodon(state.name)) {
-          generateAuthURL(async (url: string | null) => {
-            if (url) setState({ ...state, generatedURL: url });
-          }, state.name);
+          const authURL = await generateAuthURL(state.name)
+          if(authURL) setState({ ...state, generatedURL: authURL });
         }else{
           alert("Error, that is not a mastodon URL")
         }
@@ -51,6 +52,18 @@ export default function LoginPage() {
 
     if (inputRef.current) inputRef.current.value = '';
   };
+
+  // const handleKeypress = e:any => {
+  //   if (e.keyCode === 13) {
+  //     // this.btn.click();
+  //   }
+  // };
+
+  function handleInputKeypress(e: React.KeyboardEvent<HTMLInputElement>){
+    if(e.keyCode == 13){
+      nextButtonRef.current?.click();
+    }
+  }
 
   return (
     <Layout>
@@ -84,6 +97,7 @@ export default function LoginPage() {
                 state.generatedURL ? 'Enter The Code' : 'Enter a domain'
               }
               onChange={input}
+              onKeyUp={handleInputKeypress}
               inputRef={inputRef}
               className='text-l w-full flex-1 bg-transparent dark:text-white'
               // labelPlaceholder="Secondary"
@@ -91,7 +105,7 @@ export default function LoginPage() {
               color='secondary'
             />
 
-            <Button onClick={auth} className='m-4 min-h-0 min-w-0'>
+            <Button onClick={auth} ref={nextButtonRef} className='m-4 min-h-0 min-w-0'>
               Next
             </Button>
           </div>

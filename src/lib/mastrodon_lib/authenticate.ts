@@ -35,18 +35,28 @@ export async function getAuthData(client: MegalodonInterface) {
 
 let auth: Promise<object | OAuth.AppData>;
 
-export function generateAuthURL(
-  authCodePromise: (url: string | null) => void,
-  newURL: string
-) {
-  setURL(newURL);
+export async function generateAuthURL(instanceUrl: string): Promise<string | null> {
+  setURL(instanceUrl);
 
-  auth = getAuthData(client).then(async (appData) => {
-    setClientData(appData.clientId, appData.clientSecret);
-    authCodePromise(appData.url);
-    return appData;
-  });
+  const appData = await getAuthData(client);
+  setClientData(appData.clientId, appData.clientSecret);
+
+  return appData.url;
 }
+
+
+// export function generateAuthURL(
+//   authCodePromise: (url: string | null) => void,
+//   newURL: string
+// ) {
+//   setURL(newURL);
+
+//   auth = getAuthData(client).then(async (appData) => {
+//     setClientData(appData.clientId, appData.clientSecret);
+//     authCodePromise(appData.url);
+//     return appData;
+//   });
+// }
 
 export function finishLogin(authKey: string) {
   if (auth)
