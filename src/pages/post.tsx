@@ -217,7 +217,7 @@ export default function LoginPage() {
                 <HiLanguage></HiLanguage>
               </button>
               <div className='flex h-full flex-1 items-center justify-end'>
-                <p className='p-3'>{inputRef.current?.value.length}</p>
+                <p className='p-3'>{inputRef.current?.value.length || 0}</p>
               </div>
             </div>
           </div>
